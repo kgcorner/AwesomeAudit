@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.aa.controller.PluginHouse">
+   <center>
+      <FlowPane fx:id="pluginHolder" hgap="5.0" prefHeight="200.0" prefWidth="200.0" vgap="2.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin></FlowPane>
+   </center>
+   <top>
+      <HBox alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="600.0" spacing="10.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="52.0" fitWidth="50.0" onMouseClicked="#onSet" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="views/icons/setting.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="52.0" fitWidth="50.0" layoutX="560.0" layoutY="11.0" onMouseClicked="#onAdd" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="views/icons/add.png" />
+               </image>
+            </ImageView>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+      </HBox>
+   </top>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</BorderPane>

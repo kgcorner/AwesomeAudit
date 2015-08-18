@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <!DOCTYPE Controllers SYSTEM "jWin.dtd"> -->
+<Controllers>
+	<controller name="home" class="com.aa.controller.Home">
+		<result name="projectBrowser" fxmlfile="views/ProjectBrowser.fxml" />
+		<result name="edit" fxmlfile="views/ProjectForm.fxml" />
+		<result name="plugin" fxmlfile="views/PluginHouse.fxml" />
+	</controller>
+	<controller name="projectBrowser" class="com.aa.controller.ProjectBrowser">
+		<result name="auditRun" fxmlfile="views/AuditRun.fxml" />
+	</controller>
+</Controllers>
