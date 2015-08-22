@@ -23,7 +23,7 @@ public class RunPlugin {
 			Class pluginClass=null;
 			try {
 				pluginClass=Class.forName(plugin.getConfig().getClassName(),true,child);
-				//System.out.println(pluginClass.getMethods()[0].getName());
+				//log.info(pluginClass.getMethods()[0].getName());
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

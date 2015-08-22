@@ -3,6 +3,9 @@ package com.aa.customcontrol.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
+
+import com.aa.controller.PluginHouse;
 import com.aa.model.Project;
 
 import javafx.fxml.FXML;
@@ -13,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 public class ProjectLabel implements Initializable{
+	private static final Logger log= Logger.getLogger(ProjectLabel.class);
 	@FXML private Text txtProject;
 	@FXML private ImageView imgProject;
 	private Project project;
@@ -30,7 +34,7 @@ public class ProjectLabel implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
-		System.out.println("Loaded");
+		log.info("Loaded");
 	}
 	
 }

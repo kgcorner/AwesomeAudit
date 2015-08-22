@@ -14,6 +14,7 @@ import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import com.aa.constants.Command;
@@ -43,7 +44,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 public class PluginHouse implements Initializable {
-	
+	private static final Logger log= Logger.getLogger(PluginHouse.class);
 	@FXML private FlowPane pluginHolder;
 	@FXML protected void onAdd(MouseEvent event)
 	{
@@ -54,14 +55,14 @@ public class PluginHouse implements Initializable {
 		{
 			if(!PluginIO.validatePlugin(pluginFile.getAbsolutePath()))
 			{
-				System.out.println("Not a valid Plugin");
+				log.info("Not a valid Plugin");
 				return;
 			}
 			StringTokenizer tokenizer= new StringTokenizer(pluginFile.getName());
 			String fileName=tokenizer.nextToken(".");
 			//String pwd=UtilityFuncs.getPWD();
 			
-			//System.out.println("File name:"+pluginFile.getName()+"SIze:"+ pluginFile.getName().split(".").length);
+			//log.info("File name:"+pluginFile.getName()+"SIze:"+ pluginFile.getName().split(".").length);
 			//String command=Command.UNTAR_PLUGIN+pluginFile.getAbsolutePath()+Command.UNTAR_PLUGIN_LOCATION_PARAM+"/"+fileName;
 			String[] command=
 							{
@@ -73,11 +74,11 @@ public class PluginHouse implements Initializable {
 							};
 			Runtime r= Runtime.getRuntime();
 			try {
-				System.out.println(Command.MKDIR_PLUGIN_DIR+fileName+";"+ command);
+				log.info(Command.MKDIR_PLUGIN_DIR+fileName+";"+ command);
 				if(!UtilityFuncs.mkDir(UtilityFuncs.getPWD()+"/plugins/"+fileName))
 				{
-					System.out.println("Failed to create plugin directory");
-					System.out.println("Exiting");
+					log.info("Failed to create plugin directory");
+					log.info("Exiting");
 					
 				}
 				Process p=r.exec(command);
@@ -120,7 +121,7 @@ public class PluginHouse implements Initializable {
 					BufferedReader br= new BufferedReader(new InputStreamReader(error));
 					String err="";
 					while((err=br.readLine())!=null)
-						System.out.println(err);
+						log.info(err);
 					br.close();
 				}
 			} catch (IOException e) {

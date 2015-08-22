@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
+
 import com.aa.constants.Command;
 import com.aa.constants.Locations;
 import com.aa.constants.Views;
@@ -31,7 +33,7 @@ import javafx.scene.text.Text;
 
 public class Run implements Initializable {
 	@FXML private FlowPane pluginStatusHolder;
-	
+	private static final Logger log= Logger.getLogger(Run.class);
 	private Project selectedProject;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -48,7 +50,7 @@ public class Run implements Initializable {
 					chkSelected.setVisible(false);
 					ImageView pluginIcon= (ImageView) root.lookup("#pluginIcon");
 					File pluginImageFile= new File(Locations.PLUGIN_RUN_IMAGE);
-					System.out.println("Load File path:"+Run.class.getResource(Locations.PLUGIN_RUN_IMAGE).getPath());
+					log.info("Load File path:"+Run.class.getResource(Locations.PLUGIN_RUN_IMAGE).getPath());
 					//if(pluginImageFile.exists())
 					//{
 						Image img= new Image(Run.class.getResourceAsStream(Locations.PLUGIN_RUN_IMAGE));
@@ -74,6 +76,6 @@ public class Run implements Initializable {
 		}
 	}
 public static void main(String[] args) {
-	System.out.println("Load File path:"+Run.class.getResource(Locations.PLUGIN_RUN_IMAGE).getPath());	
+	log.info("Load File path:"+Run.class.getResource(Locations.PLUGIN_RUN_IMAGE).getPath());	
 }
 }

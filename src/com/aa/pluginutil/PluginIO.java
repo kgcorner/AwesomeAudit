@@ -19,11 +19,15 @@ import java.util.List;
 
 import javax.tools.DocumentationTool.Location;
 
+import org.apache.log4j.Logger;
+
 import com.aa.constants.Command;
 import com.aa.constants.Locations;
+import com.aa.controller.PluginHouse;
 import com.aa.model.Plugin;
 
 public class PluginIO {
+	private static final Logger log= Logger.getLogger(PluginIO.class);
 	public static List<Plugin> getAllPlugin()
 	{
 		FileInputStream is=null;
@@ -110,7 +114,7 @@ public class PluginIO {
 	public static boolean validatePlugin(String pluginLocation)
 	{
 		String command=Command.PLUGIN_TAR_LIST;
-		System.out.println("Command:"+command);
+		log.info("Command:"+command);
 		Runtime runtime= Runtime.getRuntime();
 		boolean jar=false;
 		boolean image=false;
@@ -149,15 +153,15 @@ public class PluginIO {
 						xml=true;
 						break;
 					}
-					System.out.println(a);
+					log.info(a);
 					//count++;
 				}
 				br= new BufferedReader(new InputStreamReader(error));
 				while((a=br.readLine())!=null)
 				{
-					System.out.println("Error:"+a);
+					log.info("Error:"+a);
 				}
-				System.out.println(proc.exitValue());
+				log.info(proc.exitValue());
 				return image&&xml&&jar;
 			//}
 		} catch (IOException e) {
@@ -179,6 +183,6 @@ public class PluginIO {
 		return false;
 	}
 	public static void main(String[] args) {
-		System.out.println(validatePlugin("/rough/awesomeaudit/AwesomeAudit/plugins/violation/New Folder/violation.tar"));
+		log.info(validatePlugin("/rough/awesomeaudit/AwesomeAudit/plugins/violation/New Folder/violation.tar"));
 	}
 }

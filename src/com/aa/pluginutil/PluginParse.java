@@ -18,6 +18,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -30,6 +31,7 @@ import com.aa.model.Process;
 import com.aa.model.ProcessType;
 
 public class PluginParse {
+	private static final Logger log= Logger.getLogger(PluginParse.class);
 	public static Plugin parse(String xmlPath) throws ParserConfigurationException, SAXException, IOException
 	{
 		Plugin plugin= new Plugin();
@@ -75,7 +77,7 @@ public class PluginParse {
 							p.setType(ProcessType.INDIVIDUAL);
 							break;
 							default:
-								System.out.println("In Apropriate Type");return null;
+								log.info("In Apropriate Type");return null;
 						}
 					}
 					processes.add(p);
@@ -113,7 +115,7 @@ public class PluginParse {
 	public static void main(String[] args) {
 		try {
 		Plugin p=	parse("/home/kumar/aaPlugin.xml");
-		System.out.println(p);
+		log.info(p);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

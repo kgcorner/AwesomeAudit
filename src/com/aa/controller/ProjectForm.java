@@ -112,7 +112,7 @@ public class ProjectForm extends BaseController implements Initializable{
 							Parent p=(Parent) event.getSource();
 							ProjectLabel pLabel=loader.getController();
 							selectedProject=pLabel.getProject();
-							//System.out.println(pLabel.getProject().getName());
+							//log.info(pLabel.getProject().getName());
 							txtProjectName.setText(pLabel.getProject().getName());
 							txtDescription.setText(pLabel.getProject().getDescription());
 							lblProjectPath.setText(pLabel.getProject().getPath());

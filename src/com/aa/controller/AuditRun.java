@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -12,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
+import application.Main;
 
 import com.aa.constants.Views;
 import com.aa.customcontrol.controller.ProjectLabel;
@@ -21,6 +24,7 @@ import com.easyfx.security.JWinSession;
 import com.easyfx.util.BaseController;
 
 public class AuditRun extends BaseController implements Initializable{
+	private static final Logger log= Logger.getLogger(AuditRun.class);
 	@FXML private BorderPane auditRunBorderPane;
 	@FXML private Label projectTitleLbl;
 	@FXML private Label lblProjectName;
@@ -34,7 +38,7 @@ public class AuditRun extends BaseController implements Initializable{
 		try {
 			load(Views.PLUGIN_HOLDER,this.auditRunBorderPane,4);
 			this.selectedProject=(Project) JWinSession.get("selectedProject");
-			System.out.println(this.selectedProject);
+			log.info(this.selectedProject);
 			this.projectTitleLbl.setText(this.selectedProject.getName());
 			FXMLLoader loader= new FXMLLoader();
 			Parent project=loader.load(AuditRun.class.getResourceAsStream(Views.PROJECT_LABEL));

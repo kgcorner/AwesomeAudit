@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 
+import org.apache.log4j.Logger;
+
 import com.aa.constants.Command;
 import com.aa.model.Plugin;
 import com.aa.model.PluginRunConfig;
@@ -14,6 +16,7 @@ import com.aa.model.Project;
 import com.aa.util.CustomClassLoader;
 
 public class PluginRunner implements Runnable{
+	private static final Logger log= Logger.getLogger(PluginRunner.class);
 	private Project project;
 	private Plugin plugin;
 	@Override
@@ -42,7 +45,7 @@ public class PluginRunner implements Runnable{
 						{
 							if(m.getName().equals(Command.PLGUIN_RUN_METHOD_NAME_CODEBASE))
 							{
-								System.out.println("Method Found");
+								log.info("Method Found");
 								m.invoke(runner, this.project.getPath());
 							}
 						}
@@ -50,7 +53,7 @@ public class PluginRunner implements Runnable{
 				}
 				else
 				{
-					System.out.println("Not Supported yet");
+					log.info("Not Supported yet");
 				}
 			}
 			

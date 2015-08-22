@@ -5,6 +5,7 @@
 		<result name="projectBrowser" fxmlfile="views/ProjectBrowser.fxml" />
 		<result name="edit" fxmlfile="views/ProjectForm.fxml" />
 		<result name="plugin" fxmlfile="views/PluginHouse.fxml" />
+		<result name="project" fxmlfile="views/ProjectBrowser.fxml" />
 	</controller>
 	<controller name="projectBrowser" class="com.aa.controller.ProjectBrowser">
 		<result name="auditRun" fxmlfile="views/AuditRun.fxml" />

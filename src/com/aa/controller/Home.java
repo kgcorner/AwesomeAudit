@@ -3,19 +3,22 @@ package com.aa.controller;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 
-import com.aa.constants.Views;
 import com.aa.util.ParamsFactory;
 import com.easyfx.exception.NoControllorFoundException;
 import com.easyfx.exception.NoResultFound;
 import com.easyfx.util.BaseController;
 
 public class Home extends BaseController {	
+	private static final Logger log= Logger.getLogger(Home.class);
+	
 	@FXML protected void onHome(MouseEvent event)
 	{
-		System.out.println("On Home");
+		log.info("On Home");
 		try {
 			load("home", "projectBrowser", ParamsFactory.masterLayout);
 		} catch (IOException | NoControllorFoundException | NoResultFound e) {
@@ -31,11 +34,11 @@ public class Home extends BaseController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("On Edit");
+		log.info("On Edit");
 	}
 	@FXML protected void onPlugin(MouseEvent event)
 	{
-		System.out.println("On Plugin");
+		log.info("On Plugin");
 		try {
 			load("home", "plugin", ParamsFactory.masterLayout);
 		} catch (IOException | NoControllorFoundException | NoResultFound e) {

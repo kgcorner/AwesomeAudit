@@ -26,12 +26,15 @@ public class ProjectBrowser extends BaseController implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		List<Project> projects=ProjectIO.getAllProject();
-		ObservableList<Project> projectCollection=FXCollections.observableArrayList();
-		for(Project p:projects)
+		if(projects!=null)
 		{
-			projectCollection.add(p);
+			ObservableList<Project> projectCollection=FXCollections.observableArrayList();
+			for(Project p:projects)
+			{
+				projectCollection.add(p);
+			}
+			cmbProjects.setItems(projectCollection);
 		}
-		cmbProjects.setItems(projectCollection);
 	}
 	@FXML protected void onSelect(ActionEvent event)
 	{	
