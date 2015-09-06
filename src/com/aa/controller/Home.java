@@ -8,6 +8,8 @@ import org.apache.log4j.Logger;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 
+import com.aa.dialogueutil.Dialogue;
+import com.aa.dialogueutil.DialogueType;
 import com.aa.util.ParamsFactory;
 import com.easyfx.exception.NoControllorFoundException;
 import com.easyfx.exception.NoResultFound;
@@ -19,12 +21,14 @@ public class Home extends BaseController {
 	@FXML protected void onHome(MouseEvent event)
 	{
 		log.info("On Home");
-		try {
+		/*try {
 			load("home", "projectBrowser", ParamsFactory.masterLayout);
 		} catch (IOException | NoControllorFoundException | NoResultFound e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		Dialogue dialogue= new Dialogue("title", "abc", DialogueType.CONFIRM, ParamsFactory.masterLayout);
+		dialogue.show();
 	}
 	@FXML protected void onEdit(MouseEvent event)
 	{
