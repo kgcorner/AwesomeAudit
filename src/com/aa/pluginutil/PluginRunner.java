@@ -8,12 +8,12 @@ import java.net.MalformedURLException;
 import org.apache.log4j.Logger;
 
 import com.aa.constants.Command;
-import com.aa.model.Plugin;
-import com.aa.model.PluginRunConfig;
-import com.aa.model.Process;
-import com.aa.model.ProcessType;
+import com.aa.constants.Locations;
 import com.aa.model.Project;
 import com.aa.util.CustomClassLoader;
+import com.odoa.models.Plugin;
+import com.odoa.models.ProcessType;
+import com.odoa.models.RunConfig;
 
 public class PluginRunner implements Runnable{
 	private static final Logger log= Logger.getLogger(PluginRunner.class);
@@ -21,21 +21,22 @@ public class PluginRunner implements Runnable{
 	private Plugin plugin;
 	@Override
 	public void run() {
+		String pluginDirectory=PluginIO.getPluginDirectory(plugin);
 		try {
 			//String jarFileName=plugin.getPluginDirectory().split("/")[plugin.getPluginDirectory().split("/").length-1];
 			//Class.forName(plugin.getPluginDirectory()+plugin.getJarFileName());
 			try {
-				CustomClassLoader.load(plugin.getPluginDirectory()+plugin.getJarFileName());
+				CustomClassLoader.load(pluginDirectory+plugin.getJarName());
 			} catch (MalformedURLException | FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			PluginRunConfig config=plugin.getConfig();
-			for(Process process:config.getProcesses())
-			{
-				if(process.getType()==ProcessType.CODEBASE)
+			RunConfig config=plugin.getRunConfigs().get(0);
+			
+			
+				if(config.getProcessType()==ProcessType.CODEBASE)
 				{
-					Object runner=Thread.currentThread().getContextClassLoader().loadClass(config.getClassName()).newInstance();
+					Object runner=Thread.currentThread().getContextClassLoader().loadClass(config.getRunClassName()).newInstance();
 					//Object runClass=runner.
 					if(runner!=null)
 					{
@@ -46,7 +47,7 @@ public class PluginRunner implements Runnable{
 							if(m.getName().equals(Command.PLGUIN_RUN_METHOD_NAME_CODEBASE))
 							{
 								log.info("Method Found");
-								m.invoke(runner, this.project.getPath());
+								m.invoke(runner, this.project.getPath(),Locations.OUTPUT_FILE_LOCATION);
 							}
 						}
 					}
@@ -55,25 +56,16 @@ public class PluginRunner implements Runnable{
 				{
 					log.info("Not Supported yet");
 				}
-			}
-			
-			
-			
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		}
 		
 		

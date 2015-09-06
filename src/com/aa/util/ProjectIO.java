@@ -7,15 +7,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import com.aa.constants.Locations;
-import com.aa.model.Plugin;
 import com.aa.model.Project;
 
 public class ProjectIO {
+	@SuppressWarnings("unchecked")
 	public static List<Project> getAllProject()
 	{
 		FileInputStream is=null;
@@ -30,7 +29,6 @@ public class ProjectIO {
 			os= new ObjectInputStream(is);
 			projects=(List<Project>) os.readObject();
 		} catch (IOException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		finally
@@ -42,8 +40,8 @@ public class ProjectIO {
 					if(os!=null)
 						os.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					
+					
 				}
 			}
 		}
@@ -60,7 +58,7 @@ public class ProjectIO {
 			oos=new ObjectOutputStream(fos);
 			oos.writeObject(projects);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		finally

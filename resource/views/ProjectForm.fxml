@@ -66,6 +66,7 @@
             </HBox>
             <HBox fx:id="hboxPluginContainer" prefHeight="154.0" prefWidth="580.0" />
             <Button mnemonicParsing="false" onAction="#onSave" text="Save" />
+            <Label fx:id="lblIndecator" />
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

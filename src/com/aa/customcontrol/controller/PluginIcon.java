@@ -3,7 +3,10 @@ package com.aa.customcontrol.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.aa.model.Plugin;
+
+
+
+import com.odoa.models.Plugin;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

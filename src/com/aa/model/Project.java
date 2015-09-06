@@ -1,7 +1,9 @@
 package com.aa.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
+
+import com.odoa.models.Plugin;
 
 public class Project implements Serializable,Comparable<Project> {
 	/**
@@ -14,7 +16,7 @@ public class Project implements Serializable,Comparable<Project> {
 	private String buildFrequency;
 	private int projectId;
 	private String image;
-	private List<Plugin> plugins;
+	private Set<Plugin> plugins;
 	public String getName() {
 		return name;
 	}
@@ -67,10 +69,10 @@ public class Project implements Serializable,Comparable<Project> {
 	public void setImage(String image) {
 		this.image = image;
 	}
-	public List<Plugin> getPlugins() {
+	public Set<Plugin> getPlugins() {
 		return plugins;
 	}
-	public void setPlugins(List<Plugin> plugins) {
+	public void setPlugins(Set<Plugin> plugins) {
 		this.plugins = plugins;
 	}
 	@Override

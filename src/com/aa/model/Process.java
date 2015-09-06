@@ -2,6 +2,8 @@ package com.aa.model;
 
 import java.io.Serializable;
 
+import com.odoa.models.ProcessType;
+
 public class Process implements Serializable{
 	/**
 	 * 

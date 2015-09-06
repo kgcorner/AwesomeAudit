@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT plugins (plugin+)>
+<!ELEMENT plugin (name,run+,author,icon,version,jarname)>
+<!ATTLIST name displayname CDATA #REQUIRED>
+<!ATTLIST run name CDATA #REQUIRED>
+<!ATTLIST run class CDATA #REQUIRED>
+<!ATTLIST run processType CDATA #REQUIRED>
+<!ATTLIST author name CDATA #REQUIRED>
+<!ATTLIST icon path CDATA #REQUIRED>
+<!ATTLIST version val CDATA #REQUIRED>
+<!ATTLIST jarname val CDATA #REQUIRED>

@@ -21,4 +21,17 @@ public class UtilityFuncs {
 		}
 		return f.exists();
 	}
+	public static String getPluginName(File pluginDirectory)
+	{
+		File[] files=pluginDirectory.listFiles();
+		String name="";
+		for(File f:files)
+		{			
+			String ext=f.getName();
+			ext=ext.contains(".")?ext.substring(ext.lastIndexOf(".")+1):"plugin";
+			if(ext.toLowerCase().equals("jar"))
+				name= f.getName().substring(0,f.getName().lastIndexOf((".")));
+		}
+		return name;
+	}
 }

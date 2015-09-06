@@ -4,17 +4,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import org.apache.log4j.Logger;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
+
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
-import application.Main;
+
+import org.apache.log4j.Logger;
 
 import com.aa.constants.Views;
 import com.aa.customcontrol.controller.ProjectLabel;
@@ -43,7 +42,7 @@ public class AuditRun extends BaseController implements Initializable{
 			FXMLLoader loader= new FXMLLoader();
 			Parent project=loader.load(AuditRun.class.getResourceAsStream(Views.PROJECT_LABEL));
 			Text txtProject=(Text) project.lookup("#txtProject");
-			ImageView imgProject=(ImageView) project.lookup("#imgProject");
+			//ImageView imgProject=(ImageView) project.lookup("#imgProject");
 			txtProject.setText(this.selectedProject.getName());
 			//imgProject.setImage(new Image(p.getImage()));
 			ProjectLabel pLabel=loader.getController();

@@ -1,139 +1,47 @@
 package com.aa.controller;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.invoke.ConstantCallSite;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
+import java.util.Set;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.log4j.Logger;
-import org.xml.sax.SAXException;
-
-import com.aa.constants.Command;
-import com.aa.constants.Locations;
-import com.aa.constants.Views;
-import com.aa.customcontrol.controller.PluginIcon;
-import com.aa.model.Plugin;
-import com.aa.pluginutil.PluginIO;
-import com.aa.pluginutil.PluginParse;
-import com.aa.util.ParamsFactory;
-import com.aa.util.UtilityFuncs;
-
-import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
+import javafx.stage.DirectoryChooser;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+
+import com.aa.constants.Locations;
+import com.aa.constants.Views;
+import com.aa.customcontrol.controller.PluginIcon;
+import com.aa.pluginutil.PluginIO;
+import com.aa.util.ParamsFactory;
+import com.odoa.exception.PluginParseException;
+import com.odoa.models.Plugin;
+import com.odoa.util.PluginParser;
 
 public class PluginHouse implements Initializable {
 	private static final Logger log= Logger.getLogger(PluginHouse.class);
 	@FXML private FlowPane pluginHolder;
-	@FXML protected void onAdd(MouseEvent event)
-	{
-		FileChooser dialog= new FileChooser();
-		Plugin plugin=null;
-		File pluginFile= dialog.showOpenDialog(ParamsFactory.primaryStage);
-		if(pluginFile!=null)
-		{
-			if(!PluginIO.validatePlugin(pluginFile.getAbsolutePath()))
-			{
-				log.info("Not a valid Plugin");
-				return;
-			}
-			StringTokenizer tokenizer= new StringTokenizer(pluginFile.getName());
-			String fileName=tokenizer.nextToken(".");
-			//String pwd=UtilityFuncs.getPWD();
-			
-			//log.info("File name:"+pluginFile.getName()+"SIze:"+ pluginFile.getName().split(".").length);
-			//String command=Command.UNTAR_PLUGIN+pluginFile.getAbsolutePath()+Command.UNTAR_PLUGIN_LOCATION_PARAM+"/"+fileName;
-			String[] command=
-							{
-							Command.UNTAR_PLUGIN, //TAR
-							Command.UNTAR_PLUGIN_OPT, //-xvf							
-							pluginFile.getAbsolutePath(), //Plgin File path
-							Command.UNTAR_PLUGIN_LOCATION_OPT, //Constant Location to untar file
-							Command.UNTAR_LOCATION+fileName //name for the dir
-							};
-			Runtime r= Runtime.getRuntime();
-			try {
-				log.info(Command.MKDIR_PLUGIN_DIR+fileName+";"+ command);
-				if(!UtilityFuncs.mkDir(UtilityFuncs.getPWD()+"/plugins/"+fileName))
-				{
-					log.info("Failed to create plugin directory");
-					log.info("Exiting");
-					
-				}
-				Process p=r.exec(command);
-				try {
-					int ent=p.waitFor();
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				if(p.exitValue()==0)
-				{
-					String pwd=UtilityFuncs.getPWD();
-					pwd=pwd+"/plugins/"+fileName+"/"; //Plugin Directory
-					try {
-						plugin=PluginParse.parse(pwd+Locations.PLUGINS_CONFIG);
-						plugin.setPluginDirectory(pwd);
-						FXMLLoader loader= new FXMLLoader();
-						Parent root=loader.load(PluginHouse.class.getResourceAsStream(Views.PLUGIN_ICON));
-						Text txtName=(Text) root.lookup("#txtPlugin");
-						ImageView pluginIcon= (ImageView) root.lookup("#pluginIcon");
-						CheckBox chkSelected=(CheckBox) root.lookup("#chkSeleted");
-						File pluginImageFile= new File(plugin.getPluginDirectory()+"/"+ plugin.getIconPath());
-						if(pluginImageFile.exists())
-						{
-							Image img= new Image(new FileInputStream(pluginImageFile));
-							pluginIcon.setImage(img);
-						}
-						txtName.setText(plugin.getName());
-						pluginHolder.getChildren().add((Node)root);
-						root.setCursor(Cursor.HAND);
-						PluginIO.serializedPlugin(plugin);
-					} catch (ParserConfigurationException | SAXException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				else
-				{
-					InputStream error=p.getErrorStream();
-					BufferedReader br= new BufferedReader(new InputStreamReader(error));
-					String err="";
-					while((err=br.readLine())!=null)
-						log.info(err);
-					br.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+	@FXML private Label lblMessage;
 	@FXML protected void onSet(MouseEvent event){}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		List<Plugin> plugins=PluginIO.getAllPlugin();
+		Set<Plugin> plugins=PluginIO.getAllPlugin();
 		if(plugins!=null)
 		{
 			for(Plugin plugin:plugins)
@@ -141,12 +49,13 @@ public class PluginHouse implements Initializable {
 				FXMLLoader loader= new FXMLLoader();
 				Parent root;
 				try {
+					String pluginDirectory=PluginIO.getPluginDirectory(plugin);
 					root = loader.load(PluginHouse.class.getResourceAsStream(Views.PLUGIN_ICON));
 					Text txtName=(Text) root.lookup("#txtPlugin");
 					CheckBox chkSelected=(CheckBox)root.lookup("#chkSelected");
 					chkSelected.setVisible(false);
 					ImageView pluginIcon= (ImageView) root.lookup("#pluginIcon");
-					File pluginImageFile= new File(plugin.getPluginDirectory()+"/"+ plugin.getIconPath());
+					File pluginImageFile= new File(pluginDirectory+"/"+ plugin.getIconPath());
 					if(pluginImageFile.exists())
 					{
 						Image img= new Image(new FileInputStream(pluginImageFile));
@@ -163,5 +72,59 @@ public class PluginHouse implements Initializable {
 				
 			}
 		}
+	}
+	@FXML private void pluginAddMethod()
+	{
+		DirectoryChooser dialog= new DirectoryChooser();
+		Plugin plugin=null;
+		File pluginFileDirectory= dialog.showDialog(ParamsFactory.primaryStage);
+		if(pluginFileDirectory!=null && pluginFileDirectory.isDirectory())
+		{
+			if(!PluginIO.validatePluginDirectory(pluginFileDirectory.getAbsolutePath()))
+			{
+				log.info("Not a valid Plugin");	
+				lblMessage.setText("Not a valid plugin");
+				lblMessage.setStyle("-fx-text-fill:red;");
+				return;
+			}
+			else
+			{
+				lblMessage.setText("");
+				try {
+					File pluginFile= new File(pluginFileDirectory.getAbsolutePath()+"/"+Locations.PLUGINS_CONFIG);
+					plugin=PluginParser.parsePlugin(pluginFile);
+					String pluginDirectory=PluginIO.getPluginDirectory(plugin);
+					File destPluginDirectory= new File(pluginDirectory);
+					if(!destPluginDirectory.exists())
+						destPluginDirectory.mkdir();
+					FileUtils.copyDirectory(pluginFileDirectory, destPluginDirectory);
+										
+					FXMLLoader loader= new FXMLLoader();
+					Parent root=loader.load(PluginHouse.class.getResourceAsStream(Views.PLUGIN_ICON));
+					Text txtName=(Text) root.lookup("#txtPlugin");
+					ImageView pluginIcon= (ImageView) root.lookup("#pluginIcon");					
+					File pluginImageFile= new File(pluginDirectory+ plugin.getIconPath());
+					if(pluginImageFile.exists())
+					{
+						Image img= new Image(new FileInputStream(pluginImageFile));
+						pluginIcon.setImage(img);
+					}
+					txtName.setText(plugin.getName());
+					pluginHolder.getChildren().add((Node)root);
+					root.setCursor(Cursor.HAND);
+					PluginIO.serializedPlugin(plugin);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+				//	e.printStackTrace();
+					log.error("Error occured while copying plugin directory", e);	
+					lblMessage.setText("Error copying plugin directory");
+					lblMessage.setStyle("-fx-text-fill:red;");
+				} catch (PluginParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
 	}
 }

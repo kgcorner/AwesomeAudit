@@ -4,19 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
-import com.aa.constants.Views;
-import com.aa.customcontrol.controller.PluginIcon;
-import com.aa.customcontrol.controller.ProjectLabel;
-import com.aa.model.Plugin;
-import com.aa.model.Project;
-import com.aa.pluginutil.PluginIO;
-import com.aa.util.ParamsFactory;
-import com.aa.util.ProjectIO;
-import com.easyfx.util.BaseController;
+import org.apache.log4j.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -27,7 +20,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -38,6 +30,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 
+import com.aa.constants.StaticMessages;
+import com.aa.constants.Views;
+import com.aa.customcontrol.controller.PluginIcon;
+import com.aa.customcontrol.controller.ProjectLabel;
+import com.aa.model.Project;
+import com.aa.pluginutil.PluginIO;
+import com.aa.util.ParamsFactory;
+import com.aa.util.ProjectIO;
+import com.easyfx.util.BaseController;
+import com.odoa.models.Plugin;
+
 public class ProjectForm extends BaseController implements Initializable{
 	@FXML private TextField txtProjectName;
 	@FXML private TextField txtBuildFrequency;
@@ -47,7 +50,9 @@ public class ProjectForm extends BaseController implements Initializable{
 	@FXML private VBox vboxPrjectContainer;
 	private boolean updating=false;
 	private Project selectedProject=null;
-	private List<Plugin> selectedPlugins= new ArrayList<>();
+	private Set<Plugin> selectedPlugins= new HashSet<>();
+	@FXML private Label lblIndecator;
+	private static final Logger log= Logger.getLogger(ProjectForm.class);
 	@FXML protected void onBrowse(ActionEvent event)
 	{
 		DirectoryChooser fileChooser= new DirectoryChooser();
@@ -68,6 +73,7 @@ public class ProjectForm extends BaseController implements Initializable{
 			project.setPath(lblProjectPath.getText());
 			project.setPlugins(selectedPlugins);
 			ProjectIO.serializedProject(project);
+			lblIndecator.setText(StaticMessages.PROJECT_FORM_PROJECT_UPDATE);
 		}
 		else
 		{
@@ -83,6 +89,7 @@ public class ProjectForm extends BaseController implements Initializable{
 						p.setBuildFrequency(txtBuildFrequency.getText());
 						p.setPath(lblProjectPath.getText());
 						ProjectIO.serializedProject(selectedProject);
+						lblIndecator.setText(StaticMessages.PROJECT_FORM_PROJECT_SAVE);
 					}
 				}
 			}
@@ -100,7 +107,7 @@ public class ProjectForm extends BaseController implements Initializable{
 				try {
 					Parent parent=loader.load(ProjectForm.class.getResourceAsStream(Views.PROJECT_LABEL));
 					Text txtProject=(Text) parent.lookup("#txtProject");
-					ImageView imgProject=(ImageView) parent.lookup("#imgProject");
+					//ImageView imgProject=(ImageView) parent.lookup("#imgProject");
 					txtProject.setText(p.getName());
 					//imgProject.setImage(new Image(p.getImage()));
 					ProjectLabel pLabel=loader.getController();
@@ -109,7 +116,7 @@ public class ProjectForm extends BaseController implements Initializable{
 
 						@Override
 						public void handle(Event event) {						
-							Parent p=(Parent) event.getSource();
+							//Parent p=(Parent) event.getSource();
 							ProjectLabel pLabel=loader.getController();
 							selectedProject=pLabel.getProject();
 							//log.info(pLabel.getProject().getName());
@@ -122,12 +129,12 @@ public class ProjectForm extends BaseController implements Initializable{
 					});
 					vboxPrjectContainer.getChildren().add(parent);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(StaticMessages.PROJECT_FORM_PROJECT_LOAD_ERROR,e);
+					lblIndecator.setText(StaticMessages.PROJECT_FORM_PROJECT_LOAD_ERROR);
 				}
 			}
 		}
-		List<Plugin> plugins= PluginIO.getAllPlugin();
+		Set<Plugin> plugins= PluginIO.getAllPlugin();
 		if(plugins!=null)
 		{
 			for(Plugin plugin:plugins)
@@ -135,10 +142,11 @@ public class ProjectForm extends BaseController implements Initializable{
 				FXMLLoader loader= new FXMLLoader();
 				Parent root;
 				try {
+					String pluginDirectory=PluginIO.getPluginDirectory(plugin);
 					root = loader.load(PluginHouse.class.getResourceAsStream(Views.PLUGIN_ICON));
 					Text txtName=(Text) root.lookup("#txtPlugin");
 					ImageView pluginIcon= (ImageView) root.lookup("#pluginIcon");
-					File pluginImageFile= new File(plugin.getPluginDirectory()+"/"+ plugin.getIconPath());
+					File pluginImageFile= new File(pluginDirectory+ plugin.getIconPath());
 					if(pluginImageFile.exists())
 					{
 						Image img= new Image(new FileInputStream(pluginImageFile));
@@ -158,8 +166,8 @@ public class ProjectForm extends BaseController implements Initializable{
 					});
 					hboxPluginContainer.getChildren().add((Node)root);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(StaticMessages.PROJECT_FORM_PLUGIN_LOAD_ERROR,e);
+					lblIndecator.setText(lblIndecator.getText()+" "+StaticMessages.PROJECT_FORM_PLUGIN_LOAD_ERROR);
 				}
 				
 			}

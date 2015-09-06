@@ -1,37 +1,27 @@
 package com.aa.pluginutil;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import javax.tools.DocumentationTool.Location;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import com.aa.constants.Command;
 import com.aa.constants.Locations;
-import com.aa.controller.PluginHouse;
-import com.aa.model.Plugin;
+import com.odoa.models.Plugin;
+
 
 public class PluginIO {
 	private static final Logger log= Logger.getLogger(PluginIO.class);
-	public static List<Plugin> getAllPlugin()
+	@SuppressWarnings("unchecked")
+	public static Set<Plugin> getAllPlugin()
 	{
 		FileInputStream is=null;
-		List<Plugin> plugins=null;
+		Set<Plugin> plugins=null;
 		ObjectInputStream os=null;
 		if(!new File(Locations.PLUGIN_INFO_FILE).exists())
 		{
@@ -40,10 +30,9 @@ public class PluginIO {
 		try {
 			is=new FileInputStream(Locations.PLUGIN_INFO_FILE);
 			os= new ObjectInputStream(is);
-			plugins=(List<Plugin>) os.readObject();
+			plugins=(Set<Plugin>) os.readObject();
 		} catch (IOException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error retrieving plugins",e);			
 		}
 		finally
 		{
@@ -54,8 +43,7 @@ public class PluginIO {
 					if(os!=null)
 						os.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(e.getMessage(),e);
 				}
 			}
 		}
@@ -65,36 +53,27 @@ public class PluginIO {
 	{
 		FileOutputStream fos=null;
 		ObjectOutputStream oos= null;
-		List<Plugin> plugins=getAllPlugin();
+		Set<Plugin> plugins=getAllPlugin();
 		if(plugins==null)
 		{
-			plugins= new ArrayList<>();
+			plugins= new HashSet<>();
 			File file= new File(Locations.PLUGIN_INFO_FILE);
 			if(!file.exists())
 			{
 				try {
 					file.createNewFile();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(e.getMessage(),e);
 				}
-			}
-			plugin.setPluginId(1);
-		}
-		else
-		{
-			
-			Collections.sort(plugins);
-			plugin.setPluginId(plugins.get(plugins.size()-1).getPluginId()+1);
-		}
+			}			
+		}		
 		plugins.add(plugin);
 		try {
 			fos= new FileOutputStream(Locations.PLUGIN_INFO_FILE);
 			oos=new ObjectOutputStream(fos);
 			oos.writeObject(plugins);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		}
 		finally
 		{
@@ -105,84 +84,61 @@ public class PluginIO {
 					if(oos!=null)
 						oos.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(e.getMessage(),e);
 				}
 			}
 		}
 	}
-	public static boolean validatePlugin(String pluginLocation)
+	/***
+	 * This method is for importing plugin through plugin directory. 
+	 * Assumption: Plugin Directory location is not validated. This method is to validate plugin structure
+	 * Please validate location prior.
+	 * Directory should have atleast three files
+	 * xml file
+	 * jar file
+	 * icon image (gif,png,jpeg)  
+	 * @param pluginDirectory
+	 * @return true if valid false otherwise
+	 */
+	public static boolean validatePluginDirectory(String pluginDirectory)	
 	{
-		String command=Command.PLUGIN_TAR_LIST;
-		log.info("Command:"+command);
-		Runtime runtime= Runtime.getRuntime();
-		boolean jar=false;
-		boolean image=false;
-		boolean xml=false;
-		//int count=0;
-		BufferedReader br=null;
-		try {
-			
-			Process proc= runtime.exec(new String[]{Command.PLUGIN_TAR_LIST,Command.PLUGIN_TAR_LIST_OPT,pluginLocation});
-			InputStream is= proc.getInputStream();
-			InputStream error=proc.getErrorStream();
-			br= new BufferedReader(new InputStreamReader(is));
-			String a="";
-			try {
-				proc.waitFor();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//if(proc.isAlive())
-			//{
-				while((a=br.readLine())!=null)
-				{
-					switch(a.split("[/.]")[1])
-					{
-					case "jar":
-						jar=true;
-						break;
-					case "jpg":
-						image=true;
-						break;
-					case "png":
-						image=true;
-						break;
-					case "xml":
-						xml=true;
-						break;
-					}
-					log.info(a);
-					//count++;
-				}
-				br= new BufferedReader(new InputStreamReader(error));
-				while((a=br.readLine())!=null)
-				{
-					log.info("Error:"+a);
-				}
-				log.info(proc.exitValue());
-				return image&&xml&&jar;
-			//}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		finally
+		boolean result=false;
+		File pluginDirectoryFile=new File(pluginDirectory);
+		File[] pluginDirCon=pluginDirectoryFile.listFiles();
+		boolean jar=false,xml=false,png=false;
+		for(File f:pluginDirCon)
 		{
-			if(br!=null)
+			String ext=f.getName().substring(f.getName().lastIndexOf(".")+1);
+			switch(ext.toLowerCase())
 			{
-				try {
-					br.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				case "jar":
+					jar=true;
+					break;
+				case "png":
+					png=true;
+					break;
+				case "jpg":
+					png=true;
+					break;
+				case "gif":
+					png=true;
+					break;
+				case "jpeg":
+					png=true;
+					break;
+				case "xml":
+					xml=true;
+					break;				
 			}
 		}
-		return false;
+		 result=jar&xml&png;
+		 return result;
 	}
-	public static void main(String[] args) {
-		log.info(validatePlugin("/rough/awesomeaudit/AwesomeAudit/plugins/violation/New Folder/violation.tar"));
+	public static String getPluginDirectory(Plugin plugin)
+	{
+		String pluginDirectory=Locations.PLUGIN_DIRECTORY_ABS;
+		pluginDirectory+=plugin.getJarName()+"/";
+		return pluginDirectory;
 	}
+	
 }
