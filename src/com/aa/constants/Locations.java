@@ -10,4 +10,5 @@ public class Locations {
 	public static final String PLUGIN_RUN_IMAGE="/views/icons/load.gif";
 	public static final String OUTPUT_FILE_LOCATION=UtilityFuncs.getPWD()+"/plugins/output";
 	public static final String PLUGIN_DIRECTORY_ABS=UtilityFuncs.getPWD()+"/plugins/";
+	public static final String PLUGIN_COMPLETE_ICON="/views/icons/done.png";
 }

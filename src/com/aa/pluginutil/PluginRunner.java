@@ -5,6 +5,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 
+import javafx.application.Platform;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import org.apache.log4j.Logger;
 
 import com.aa.constants.Command;
@@ -19,6 +23,7 @@ public class PluginRunner implements Runnable{
 	private static final Logger log= Logger.getLogger(PluginRunner.class);
 	private Project project;
 	private Plugin plugin;
+	private ImageView pluginRunImage;
 	@Override
 	public void run() {
 		String pluginDirectory=PluginIO.getPluginDirectory(plugin);
@@ -26,7 +31,7 @@ public class PluginRunner implements Runnable{
 			//String jarFileName=plugin.getPluginDirectory().split("/")[plugin.getPluginDirectory().split("/").length-1];
 			//Class.forName(plugin.getPluginDirectory()+plugin.getJarFileName());
 			try {
-				CustomClassLoader.load(pluginDirectory+plugin.getJarName());
+				CustomClassLoader.load(pluginDirectory+plugin.getJarName()+".jar");
 			} catch (MalformedURLException | FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -34,7 +39,7 @@ public class PluginRunner implements Runnable{
 			RunConfig config=plugin.getRunConfigs().get(0);
 			
 			
-				if(config.getProcessType()==ProcessType.CODEBASE)
+				if(config.getProcessType()==ProcessType.INDIVIDUAL)
 				{
 					Object runner=Thread.currentThread().getContextClassLoader().loadClass(config.getRunClassName()).newInstance();
 					//Object runClass=runner.
@@ -56,6 +61,13 @@ public class PluginRunner implements Runnable{
 				{
 					log.info("Not Supported yet");
 				}
+				Platform.runLater(new Runnable() {
+					
+					@Override
+					public void run() {						
+						pluginRunImage.setImage(new Image(Locations.PLUGIN_COMPLETE_ICON));
+					}
+				});
 		} catch (ClassNotFoundException e) {
 			log.error(e.getMessage(),e);
 		} catch (IllegalAccessException e) {
@@ -81,6 +93,12 @@ public class PluginRunner implements Runnable{
 	}
 	public void setPlugin(Plugin plugin) {
 		this.plugin = plugin;
+	}
+	public ImageView getPluginRunImage() {
+		return pluginRunImage;
+	}
+	public void setPluginRunImage(ImageView pluginRunImage) {
+		this.pluginRunImage = pluginRunImage;
 	}
 
 }

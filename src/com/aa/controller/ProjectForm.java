@@ -74,6 +74,12 @@ public class ProjectForm extends BaseController implements Initializable{
 			project.setPlugins(selectedPlugins);
 			ProjectIO.serializedProject(project);
 			lblIndecator.setText(StaticMessages.PROJECT_FORM_PROJECT_UPDATE);
+			try {
+				loadProjectLabel(vboxPrjectContainer,new FXMLLoader(),project);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
 		}
 		else
 		{
@@ -105,29 +111,7 @@ public class ProjectForm extends BaseController implements Initializable{
 			{
 				FXMLLoader loader= new FXMLLoader();
 				try {
-					Parent parent=loader.load(ProjectForm.class.getResourceAsStream(Views.PROJECT_LABEL));
-					Text txtProject=(Text) parent.lookup("#txtProject");
-					//ImageView imgProject=(ImageView) parent.lookup("#imgProject");
-					txtProject.setText(p.getName());
-					//imgProject.setImage(new Image(p.getImage()));
-					ProjectLabel pLabel=loader.getController();
-					pLabel.setProject(p);
-					parent.setOnMouseClicked(new EventHandler<Event>() {
-
-						@Override
-						public void handle(Event event) {						
-							//Parent p=(Parent) event.getSource();
-							ProjectLabel pLabel=loader.getController();
-							selectedProject=pLabel.getProject();
-							//log.info(pLabel.getProject().getName());
-							txtProjectName.setText(pLabel.getProject().getName());
-							txtDescription.setText(pLabel.getProject().getDescription());
-							lblProjectPath.setText(pLabel.getProject().getPath());
-							txtBuildFrequency.setText(pLabel.getProject().getBuildFrequency());
-							updating=true;
-						}
-					});
-					vboxPrjectContainer.getChildren().add(parent);
+					loadProjectLabel(vboxPrjectContainer, loader, p);			
 				} catch (IOException e) {
 					log.error(StaticMessages.PROJECT_FORM_PROJECT_LOAD_ERROR,e);
 					lblIndecator.setText(StaticMessages.PROJECT_FORM_PROJECT_LOAD_ERROR);
@@ -172,6 +156,33 @@ public class ProjectForm extends BaseController implements Initializable{
 				
 			}
 		}
+	}
+	private void loadProjectLabel(VBox vboxPrjectContainer,FXMLLoader loader,Project p) throws IOException
+	{
+		Parent parent=loader.load(ProjectForm.class.getResourceAsStream(Views.PROJECT_LABEL));
+		Text txtProject=(Text) parent.lookup("#txtProject");
+		//ImageView imgProject=(ImageView) parent.lookup("#imgProject");
+		txtProject.setText(p.getName());
+		//imgProject.setImage(new Image(p.getImage()));
+		ProjectLabel pLabel=loader.getController();
+		pLabel.setProject(p);
+		parent.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {						
+				//Parent p=(Parent) event.getSource();
+				ProjectLabel pLabel=loader.getController();
+				selectedProject=pLabel.getProject();
+				//log.info(pLabel.getProject().getName());
+				txtProjectName.setText(pLabel.getProject().getName());
+				txtDescription.setText(pLabel.getProject().getDescription());
+				lblProjectPath.setText(pLabel.getProject().getPath());
+				txtBuildFrequency.setText(pLabel.getProject().getBuildFrequency());
+				updating=true;
+			}
+		});
+		vboxPrjectContainer.getChildren().add(parent);
+
 	}
 	
 }
